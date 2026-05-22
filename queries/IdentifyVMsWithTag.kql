@@ -1,32 +1,3 @@
-# AzureMANA
-
-Azure Resource Graph (KQL) queries for identifying Network Virtual Appliances (NVAs) and related virtual machines / scale sets across Azure subscriptions.
-
-## How to run these queries in Azure
-
-1. Sign in to the [Azure portal](https://portal.azure.com).
-2. Search for and open **Azure Resource Graph Explorer**.
-3. Make sure the correct subscriptions are selected in the **Scope** picker (top of the page).
-4. Copy a query below using the **copy icon** in the top-right of the code block.
-5. Paste it into the query editor and click **Run query**.
-6. Use **Download as CSV** to export results.
-
-> Tip: You can also run these from the CLI with `az graph query -q "$(Get-Content .\queries\IdentifyVMsWithTag.kql -Raw)"`.
-
----
-
-## Query: Identify NVA VMs / VMSS missing the `LegacyVMNVA` tag
-
-This query finds Virtual Machines and Virtual Machine Scale Sets that:
-
-- Are published by a known NVA / network security vendor (Palo Alto, Check Point, Fortinet, F5, Cisco, Citrix, A10, Arista, Aviatrix, Barracuda, Cohesive, Imperva, NetApp, HAProxy, Heimdall, etc.).
-- Use a matching NVA **offer** (FortiGate, VM-Series, CloudGuard, BIG-IP, NetScaler, vThunder, CloudEOS, etc.).
-- Run on an older / legacy VM size family (Dv2–Dv5, Ev3–Ev5, Bsv2, Av2, Fsv2 / F, G, L).
-- Are **not** already tagged with `LegacyVMNVA`.
-
-Source file: [`queries/IdentifyVMsWithTag.kql`](queries/IdentifyVMsWithTag.kql)
-
-```kusto
 Resources
 | where type in (
     "microsoft.compute/virtualmachines",
@@ -217,10 +188,3 @@ Resources
     tags
 | order by subscriptionId, resourceGroup, name
 | order by ['HasLegacyTag'] asc
-```
-
----
-
-## License
-
-See [LICENSE](LICENSE).
